@@ -1,0 +1,253 @@
+\documentclass[10pt,landscape]{article}
+\usepackage{../common/cheat-style}
+\usepackage{url}
+\usepackage{hyperref}
+
+\begin{document}
+
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2em}
+
+\makeheader{GnuCOBOL Compiler}
+
+\vspace{-2mm}
+\begin{multicols}{3}
+
+  \vbox{
+   ~\\ %space under BY-SA logo
+\begin{itemize}
+\item  GnuCOBOL website: \url{https://gnucobol.sourceforge.io/}
+\item  GnuCOBOL Manual: \url{https://gnucobol.sourceforge.io/doc/gnucobol.html}
+\item  GnuCOBOL Language Quick Reference: \url{https://gnucobol.sourceforge.io/HTML/gnucobqr.html}
+\item  Sample Programs: \url{https://gnucobol.sourceforge.io/HTML/gnucobsp.html}
+\item  FAQ: \url{https://gnucobol.sourceforge.io/faq/index.html}
+\end{itemize}
+
+
+\subsection{Installation}
+
+{\bf Source repositories:}\vspace{-3mm}
+\begin{verbatim}
+REPO=https://svn.code.sf.net/p/gnucobol/code
+svn checkout $REPO/branches/gnucobol-3.x
+\end{verbatim}\vspace{-3mm}
+{\bf or:}\vspace{-3mm}
+\begin{verbatim}
+REPO=https://svn.code.sf.net/p/gnucobol/code
+svn checkout $REPO/code/trunk gnucobol-trunk
+\end{verbatim}\vspace{-2mm}
+{\bf Build and Install:}\vspace{-3mm}
+\begin{verbatim}
+COBPREFIX=/opt/gnucobol
+./build_aux/bootstrap
+mkdir _build
+cd _build
+../configure --enable-cobc-internal-checks --enable-debug \
+  --prefix $COBPREFIX --exec-prefix $COBPREFIX
+make
+sudo make install
+\end{verbatim}\vspace{-2mm}
+{\bf Configuration to use:}\vspace{-3mm}
+\begin{verbatim}
+COBPREFIX=/opt/gnucobol
+PATH=$COBPREFIX/bin:$PATH
+LD_LIBRARY_PATH=$COBPREFIX/lib:$LD_LIBRARY_PATH
+export PATH LD_LIBRARY_PATH
+\end{verbatim}
+{\bf Supported Dialects:}\\
+\begin{tabular}{ll}
+\verb+acu+, \verb+acu-strict+ & ACUCOBOL-GT \\
+\verb+bs2000+, \verb+bs2000-strict+ & BS2000 COBOL (Siemens) \\
+\verb+cobol2002+ & Cobol ISO-2002 \\
+\verb+cobol2014+ & Cobol ISO-2014 \\
+\verb+cobol85+ & Cobol ANSI-1985 \\
+\verb+default+ & Default config\\
+\verb+ibm+, \verb+ibm-strict+ & IBM COBOL \\
+\verb+mf+, \verb+mf-strict+ & Micro Focus COBOL  \\
+\verb+mvs+, \verb+mvs-strict+ & MVS/VM COBOL \\
+\verb+realia+, \verb+realia-strict+ & CA Realia II COBOL \\
+\verb+rm+, \verb+rm-strict+ & RM-COBOL \\
+\verb+xopen+ & OpenGroup Cobol 1991 C192\\
+\end{tabular}
+
+{\bf Environment Variables:}\\
+~\hspace{-0.7em}\begin{tabular}{ll}
+\verb+COB_PRE_LOAD=m1:m2+ & Lookup CALLs in \verb+m1,m2+\\ 
+\verb+COB_CURRENT_DATE=YYYYDDMMHH24MISS+ & Date returned by ACCEPT\\ 
+\verb+COB_LOAD_CASE=UPPER/LOWER+ & Lookup filenames\\ 
+\verb+COB_LIBRARY_PATH=[...]+ & Lookup dynamic modules\\ 
+\verb+COB_FILE_PATH=[...]+ & Lookup data files\\
+\verb+COB_DISABLE_WARNINGS=true/false+ & Turn off warnings\\
+%\verb+COB_ENV_MANGLE=true/false+ & ...\\
+\verb+COB_SET_DEBUG=true/false+ & Turn on debug lines\\
+\verb+COB_SET_TRACE=true/false+ & Turn on trace\\
+%\verb+COB_TRACE_FILE=filename+ & ...\\
+\verb+COB_STACKTRACE=true/false+ & Print stacktrace on abort\\
+\verb+COB_DUMP_FILE=filename+ & Set dump file\\
+\end{tabular}
+  }
+
+  \vbox{
+\subsection{Compiler Options}
+
+{\bf General Options:}\\
+\begin{tabular}{ll}
+\verb+cobc --help+ & Display help \\
+\verb+cobc --version+ & Display version \\
+\end{tabular}
+
+{\bf Debugging compilation:}\\
+\begin{tabular}{ll}
+\verb+cobc -v [...]+ & Increase verbosity \\
+\verb+cobc -q [...]+ & Suppress verbosity \\
+\verb+cobc -### [...]+ & Do not execute sub-commands \\
+\verb+cobc --save-temps [...]+ & Keep intermediary files \\
+\verb+cobc -E [...]+ & Stop after pre-processing \\
+\verb+cobc -fsyntax-only [...]+ & Stop after parsing \\
+\verb+cobc -C [...]+ & Stop after C generation \\
+\end{tabular}
+
+{\bf Choosing Syntax:}\\
+\begin{tabular}{ll}
+\verb+cobc --free [...]+ & Use Free Format \\
+\verb+cobc --fixed [...]+ & Use Fixed Format \\
+\end{tabular}
+
+{\bf Filenames conversions:}\\
+\begin{tabular}{ll}
+\verb+cobc -ffold-copy=[UPPER|LOWER] [...]+ & During COPY \\
+\verb+cobc -ffold-call=[UPPER|LOWER] [...]+ & During CALL \\
+\verb+cobc --ext CBL [...]+ & Extension for COPY\\
+\end{tabular}
+{\bf Language configuration:}\\
+\begin{tabular}{ll}
+\verb+cobc --std=DIALECT [...]+ & Use the specified dialect \\
+\verb+cobc --conf=FILE [...]+ & Use the specified configuration \\
+\end{tabular}
+{\bf Output Configuration:}\\
+\begin{tabular}{ll}
+\verb+cobc -x -o FILE [...]+ & Generate executable FILE \\
+\verb+cobc -c [...]+ & Gen. static module (\verb+.o+) \\
+\verb+cobc -m [...]+ & Gen. dynamic module (\verb+.so+) \\
+\verb+cobc -b [...]+ & Gen. dyn. library from static modules \\
+\end{tabular}
+{\bf Compiler Configuration:}\\
+\begin{tabular}{ll}
+\verb+cobc -I DIR [...]+ & Add DIR to include path\\
+\verb+cobc -L DIR [...]+ & Add DIR to linking path\\
+\verb+cobc -lXXX [...]+ & Link with libXXX.so\\
+\verb+cobc -l:XXX.so [...]+ & Link with XXX.so\\
+\verb+cobc -A OPT [...]+ & Pass option OPT to C compiler\\
+\verb+cobc -Q OPT [...]+ & Pass option OPT to linker\\
+\end{tabular}
+{\bf Optimizations:}\\
+\begin{tabular}{ll}
+\verb+cobc -O2 [...]+ & More optimizations\\
+\verb+cobc -O0 [...]+ & Disable all optimizations\\
+\verb+cobc -fstatic-call [...]+ & Disable dynamic lookup of CALL\\
+\end{tabular}
+{\bf Warnings and Errors:}\\
+\begin{tabular}{ll}
+\verb+cobc -Wall [...]+ & Display all warnings\\
+\verb+cobc -Wextra [...]+ & Display more warnings than \verb+-Wall+\\
+\verb+cobc -fmax-errors=N [...]+ & Display N errors max\\
+\verb+cobc -Werror [...]+ & Handle warnings as errors\\
+\end{tabular}
+{\bf Display Language Help:}\\
+\begin{tabular}{ll}
+\verb+cobc --list-reserved+ & List reserved keywords\\
+\verb+cobc --list-intrinsics+ & List intrinsic functions\\
+\verb+cobc --list-mnemonics+ & List mnemonics\\
+\verb+cobc --list-system+ & List system routines\\
+\verb+cobc --list-registers+ & List available registers\\
+\end{tabular}
+{\bf Debugging:}\\
+\begin{tabular}{ll}
+\verb+cobc -g [...]+ & Generate debugging information for \verb+gdb+\\
+\verb+cobc -d [...]+ & Activate all error checks at execution\\
+\verb+cobc -ftrace [...]+ & Generate limited execution trace\\
+\verb+cobc -ftraceall [...]+ & Generate full execution trace\\
+\end{tabular}
+}
+
+    \subsection{Debugging with {\tt gdb} and {\tt cbl-gdb}}
+
+{\bf Installation:}\vspace{-3mm}
+\begin{verbatim}
+git clone https://gitlab.cobolworx.com/COBOLworx/cbl-gdb.git
+cd cbl-gdb
+git checkout master
+make
+sudo make install
+\end{verbatim}\vspace{-2mm}
+{\bf Create \verb+$HOME/.gdbinit+ file with:}\vspace{-3mm}
+\begin{verbatim}
+# enable use of COBOL cbl-dbg extension
+add-auto-load-safe-path /usr/local/bin
+set directories /usr/local/bin
+set auto-load python-scripts on
+\end{verbatim}\vspace{-2mm}
+
+{\bf Build with \verb+cobcd+:}\vspace{-3mm}
+\begin{verbatim}
+export COBCD_COBC=/path/to/cobc
+cobcd -x prog.cbl -o prog.exe
+gdb prog.exe
+\end{verbatim}\vspace{-2mm}
+{\bf COBOL-specific commands:}
+\begin{tabular}{ll}
+\verb+cstart [ARGS]+ & Start the program with COBOL args \\
+\verb+cbreak FILE:LINE+ & Add a COBOL breakpoint \\
+\verb+ctbreak FILE:LINE+ & Add a one-time breakpoint \\
+\verb+cwatch VARIABLE+ & Breakpoint on VARIABLE value \\
+\verb+cnext N+ & Advance without entering PERFORM \\
+\verb+auto-step+ & Step automatically \\
+\verb+until-cobol+ & Execute until next COBOL module\\
+\verb+finish-module+ & Execute until end of current module\\
+\multicolumn{2}{l}{\tt finish-out-of-line-perform} \\
+   & Execute until end of PERFORM \\
+\verb+cprint VARIABLE+ & Print content of COBOL variable \\
+\verb+cbacktrace+ & Print COBOL backtrace \\
+\verb+local-backtrace+ & Print only local backtrace \\
+\verb+cup+ & Select calling function\\
+\verb+cdown+ & Select called function \\
+\multicolumn{2}{l}{\tt add-symbol-file-cobol FILE} \\
+  & Add a FILE containing symbols \\
+\end{tabular}
+
+  \subsection{VSCode Extension}
+
+{\bf Install from VSIX:}
+\url{https://cobolworx.com/pages/vsix.html}
+
+{\bf Example of \verb+tasks.json+:}\vspace{-3mm}
+\begin{verbatim}
+{"version": "2.0.0",
+ "tasks": [ { "label": "make",   "type": "shell",
+   "command": "COBCD_COBC=/path/to/cobc cobcd -Q -Wl,-rpath=/path/to/lib -L/path/to/lib -x ${fileBasename}" }] }
+\end{verbatim}\vspace{-2mm}
+{\bf Example \verb+launch.json+:}\vspace{-3mm}
+\begin{verbatim}
+{ "version": "0.2.0",
+  "configurations": [{
+    "name": "cobc build and debug", "type": "cbl-gdb",
+    "request": "launch",            "preLaunchTask": "make",
+    "program": "${workspaceFolder}/${fileBasenameNoExtension}",
+    "cwd": "${workspaceFolder}",    "arguments": ""
+   }, {
+    "name": "Attach cbl-gdb to Cobol process",
+    "type": "cbl-gdb",           "cwd": "${workspaceFolder}",
+    "solibs": "${env:PRIM_LIBRARY_PATH}", "request": "attach",
+    "process_id": "${command:getAttachPID}" }]}
+\end{verbatim}
+
+\end{multicols}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
